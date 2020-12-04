@@ -1,0 +1,96 @@
+Bootstrap: localimage
+From: augustus-git.simg
+
+%labels
+    # some structure borrowed from https://github.com/ISU-HPC/braker/blob/master/Singularity
+    AUTHOR brant@lsu.edu
+    Version v0.0.2
+
+%post
+    # Update apt-get
+    apt-get update
+
+    #Install GeneMark
+    cd /
+    wget http://topaz.gatech.edu/GeneMark/tmp/GMtool_eq8Tq/gmes_linux_64.tar.gz
+    tar xvf gmes_linux_64.tar.gz
+    rm gmes_linux_64.tar.gz
+    cd gmes_linux_64
+    wget http://topaz.gatech.edu/GeneMark/tmp/GMtool_eq8Tq/gm_key_64.gz
+    # unzip and move the key to expected name
+    gunzip gm_key_64.gz && mv gm_key_64 .gm_key
+    echo 'export GENEMARK_PATH=/gmes_linux_64' >>$SINGULARITY_ENVIRONMENT
+
+    #Install perl dependencies
+    echo 'export LANG=C' >>$SINGULARITY_ENVIRONMENT
+    cpan App::cpanminus
+    cpanm YAML File::Spec::Functions Hash::Merge List::Util List::MoreUtils Logger::Simple \
+    Module::Load::Conditional Parallel::ForkManager POSIX Scalar::Util::Numeric File::Which \
+    YAML Math::Utils MCE::Mutex threads File::HomeDir File::Which File::Basename File::Copy 
+
+    # Install ProtHint
+    cd /
+    wget -O prothint-v2.5.0.tar.gz https://github.com/gatech-genemark/ProtHint/archive/v2.5.0.tar.gz
+    tar xvf prothint-v2.5.0.tar.gz
+    rm prothint-v2.5.0.tar.gz
+    echo 'export PROTHINT_PATH=/ProtHint-2.5.0/bin/' >>$SINGULARITY_ENVIRONMENT
+
+    # Install GenomeThreader
+    cd /
+    wget https://genomethreader.org/distributions/gth-1.7.3-Linux_x86_64-64bit.tar.gz
+    tar xvf gth-1.7.3-Linux_x86_64-64bit.tar.gz
+    rm gth-1.7.3-Linux_x86_64-64bit.tar.gz
+    echo 'export PATH=/gth-1.7.3-Linux_x86_64-64bit/bin/:$PATH' >>$SINGULARITY_ENVIRONMENT
+
+    # Install Exonerate
+    cd /
+    wget http://ftp.ebi.ac.uk/pub/software/vertebrategenomics/exonerate/exonerate-2.2.0-x86_64.tar.gz
+    tar xvf exonerate-2.2.0-x86_64.tar.gz
+    rm exonerate-2.2.0-x86_64.tar.gz
+    echo 'export ALIGNMENT_TOOL_PATH=/exonerate-2.2.0-x86_64/bin' >>$SINGULARITY_ENVIRONMENT
+
+    #Install blast, biotools and bamtools
+    apt-get install -y ncbi-blast+ bamtools python3-biopython 
+
+    # Install cdbfasta
+    cd /
+    git clone https://github.com/gpertea/cdbfasta
+    cd cdbfasta
+    make
+    echo 'export CDBTOOLS_PATH=/cdbfasta/' >>$SINGULARITY_ENVIRONMENT
+
+    # GUSHR needs java 1.8
+    cd /
+    apt-get install -y openjdk-8-jre-headless
+
+    # Install GUSHR
+    cd /
+    git clone https://github.com/Gaius-Augustus/GUSHR
+    echo 'export PATH=/GUSHR:$PATH' >>$SINGULARITY_ENVIRONMENT
+
+    # Get some UCSC stuff
+    cd /usr/local/bin
+    wget http://hgdownload.soe.ucsc.edu/admin/exe/linux.x86_64/twoBitInfo
+    wget http://hgdownload.soe.ucsc.edu/admin/exe/linux.x86_64/faToTwoBit
+    chmod +x twoBitInfo
+    chmod +x faToTwoBit
+
+    # get makehub
+    cd /
+    git clone https://github.com/Gaius-Augustus/MakeHub.git
+    echo 'export MAKEHUB_PATH=/MakeHub' >>$SINGULARITY_ENVIRONMENT
+
+    #Install braker and set required variables
+    cd /
+    git clone https://github.com/Gaius-Augustus/BRAKER
+    echo 'export PATH=/BRAKER/scripts:/ProtHint-2.5.0/dependencies:$PATH' >>$SINGULARITY_ENVIRONMENT
+    echo 'export AUGUSTUS_SCRIPTS_PATH=/augustus/scripts' >>$SINGULARITY_ENVIRONMENT
+    echo 'export AUGUSTUS_BIN_PATH=/augustus/bin' >>$SINGULARITY_ENVIRONMENT
+    echo 'export AUGUSTUS_CONFIG_PATH=/augustus/config' >>$SINGULARITY_ENVIRONMENT
+    echo 'export DIAMOND_PATH=/ProtHint-2.5.0/dependencies/' >>$SINGULARITY_ENVIRONMENT
+
+    # Create bind points for HPC environment
+    mkdir /project /work /usr/lib64
+
+    # cleanup
+    apt-get clean
