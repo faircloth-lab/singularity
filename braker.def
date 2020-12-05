@@ -33,14 +33,14 @@ From: augustus-git.simg
     wget -O prothint-v2.5.0.tar.gz https://github.com/gatech-genemark/ProtHint/archive/v2.5.0.tar.gz
     tar xvf prothint-v2.5.0.tar.gz
     rm prothint-v2.5.0.tar.gz
-    echo 'export PROTHINT_PATH=/ProtHint-2.5.0/bin/' >>$SINGULARITY_ENVIRONMENT
+    echo 'export PROTHINT_PATH=/ProtHint-2.5.0/bin' >>$SINGULARITY_ENVIRONMENT
 
     # Install GenomeThreader
     cd /
     wget https://genomethreader.org/distributions/gth-1.7.3-Linux_x86_64-64bit.tar.gz
     tar xvf gth-1.7.3-Linux_x86_64-64bit.tar.gz
     rm gth-1.7.3-Linux_x86_64-64bit.tar.gz
-    echo 'export PATH=/gth-1.7.3-Linux_x86_64-64bit/bin/:$PATH' >>$SINGULARITY_ENVIRONMENT
+    echo 'export PATH=/gth-1.7.3-Linux_x86_64-64bit/bin:$PATH' >>$SINGULARITY_ENVIRONMENT
 
     # Install Exonerate
     cd /
@@ -49,19 +49,20 @@ From: augustus-git.simg
     rm exonerate-2.2.0-x86_64.tar.gz
     echo 'export ALIGNMENT_TOOL_PATH=/exonerate-2.2.0-x86_64/bin' >>$SINGULARITY_ENVIRONMENT
 
-    #Install blast, biotools and bamtools
-    apt-get install -y ncbi-blast+ bamtools python3-biopython 
+    #Install blast, biotools, bamtools, locales and java 1.8
+    apt-get install -y ncbi-blast+ bamtools python3-biopython locales openjdk-8-jre-headless
+
+    # Configure locales
+    echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
+    locale-gen en_US.utf8
+    /usr/sbin/update-locale LANG=en_US.UTF-8
 
     # Install cdbfasta
     cd /
     git clone https://github.com/gpertea/cdbfasta
     cd cdbfasta
     make
-    echo 'export CDBTOOLS_PATH=/cdbfasta/' >>$SINGULARITY_ENVIRONMENT
-
-    # GUSHR needs java 1.8
-    cd /
-    apt-get install -y openjdk-8-jre-headless
+    echo 'export CDBTOOLS_PATH=/cdbfasta' >>$SINGULARITY_ENVIRONMENT
 
     # Install GUSHR
     cd /
@@ -87,10 +88,16 @@ From: augustus-git.simg
     echo 'export AUGUSTUS_SCRIPTS_PATH=/augustus/scripts' >>$SINGULARITY_ENVIRONMENT
     echo 'export AUGUSTUS_BIN_PATH=/augustus/bin' >>$SINGULARITY_ENVIRONMENT
     echo 'export AUGUSTUS_CONFIG_PATH=/augustus/config' >>$SINGULARITY_ENVIRONMENT
-    echo 'export DIAMOND_PATH=/ProtHint-2.5.0/dependencies/' >>$SINGULARITY_ENVIRONMENT
+    echo 'export DIAMOND_PATH=/ProtHint-2.5.0/dependencies' >>$SINGULARITY_ENVIRONMENT
+
+    # We need to set the locales
+    echo 'export LC_ALL=en_US.UTF-8' >>$SINGULARITY_ENVIRONMENT
+    echo 'export LANG=en_US.UTF-8' >>$SINGULARITY_ENVIRONMENT
+    echo 'export LANGUAGE=en_US.UTF-8' >>$SINGULARITY_ENVIRONMENT
+
 
     # Create bind points for HPC environment
-    mkdir /project /work /usr/lib64
+    mkdir /project /work /usr/lib64 /scratch
 
     # cleanup
     apt-get clean
