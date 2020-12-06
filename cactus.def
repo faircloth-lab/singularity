@@ -19,6 +19,8 @@ From: ubuntu:18.04
     # get cactus binaries
     wget https://github.com/ComparativeGenomicsToolkit/cactus/releases/download/v1.2.3/cactus-bin-v1.2.3.tar.gz
     tar -xzf cactus-bin-v1.2.3.tar.gz
+    # we dont need the arcive
+    rm cactus-bin-v1.2.3.tar.gz
     cd cactus-bin-v1.2.3
     pip install -U setuptools pip
     pip install -U -r ./toil-requirement.txt
@@ -31,8 +33,8 @@ From: ubuntu:18.04
     done
     # update env
     echo '. /opt/cactus/cactus_env/bin/activate' >> $SINGULARITY_ENVIRONMENT
-    echo 'export PATH=$(pwd)/bin:$PATH' >> $SINGULARITY_ENVIRONMENT
-    echo 'export PYTHONPATH=$(pwd)/lib:$PYTHONPATH' >> $SINGULARITY_ENVIRONMENT
+    echo 'export PATH=/opt/cactus/cactus_env/bin:$PATH' >> $SINGULARITY_ENVIRONMENT
+    echo 'export PYTHONPATH=/opt/cactus/cactus-bin-v1.2.3/lib:$PYTHONPATH' >> $SINGULARITY_ENVIRONMENT
 
 
 %runscript
