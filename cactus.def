@@ -1,41 +1,47 @@
 BootStrap: docker
+# ubuntu 18.04 is the cactus testing environment
 From: ubuntu:18.04
 
 %labels
-    Author brant@lsu.edu
-    Version v0.0.2
+    AUTHOR brant@lsu.edu
+    MAINTAINER brant@lsu.edu
+    VERSION v1.2.3-bcf
 
 %post
-    # update the repo
+    # Update the distro repo
     apt-get -o Acquire::ForceIPv4=true update
-    # install python3
+    # Install python3 and some other required items
     apt-get -o Acquire::ForceIPv4=true install -y python3 python3-pip build-essential wget git && apt-get clean autoclean
-    # install virtualenv
+    # Install virtualenv
     mkdir /opt/cactus
     cd /opt/cactus
+    # Create a virtualenv for cactus, as recommended by cactus installation instructions
     python3 -m pip install virtualenv
     python3 -m virtualenv -p python3.6 cactus_env
+    # Activate the virtualenv
     . /opt/cactus/cactus_env/bin/activate
-    # get cactus binaries
+    # Get cactus binaries
     wget https://github.com/ComparativeGenomicsToolkit/cactus/releases/download/v1.2.3/cactus-bin-v1.2.3.tar.gz
     tar -xzf cactus-bin-v1.2.3.tar.gz
-    # we dont need the arcive
+    # We dont need the archive
     rm cactus-bin-v1.2.3.tar.gz
+    # Install cactus
     cd cactus-bin-v1.2.3
     pip install -U setuptools pip
     pip install -U -r ./toil-requirement.txt
     pip install -U .
+    # get some UCSC binaries - also required and our license is edu
     cd bin
-    # get some UCSC binaries
     for i in wigToBigWig faToTwoBit bedToBigBed bigBedToBed bedSort hgGcPercent;
         do wget -q http://hgdownload.cse.ucsc.edu/admin/exe/linux.x86_64/${i};
         chmod ugo+x ${i};
     done
-    # update env
+    # Update env to add environment variable
     echo '. /opt/cactus/cactus_env/bin/activate' >> $SINGULARITY_ENVIRONMENT
     echo 'export PATH=/opt/cactus/cactus_env/bin:$PATH' >> $SINGULARITY_ENVIRONMENT
     echo 'export PYTHONPATH=/opt/cactus/cactus-bin-v1.2.3/lib:$PYTHONPATH' >> $SINGULARITY_ENVIRONMENT
-
+    # Create bind points for HPC and/or local environment
+    mkdir /project /work /usr/lib64 /scratch
 
 %runscript
     exec "$@"
