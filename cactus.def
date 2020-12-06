@@ -1,0 +1,39 @@
+BootStrap: docker
+From: ubuntu:18.04
+
+%labels
+    Author brant@lsu.edu
+    Version v0.0.2
+
+%post
+    # update the repo
+    apt-get -o Acquire::ForceIPv4=true update
+    # install python3
+    apt-get -o Acquire::ForceIPv4=true install -y python3 python3-pip build-essential wget git && apt-get clean autoclean
+    # install virtualenv
+    mkdir /opt/cactus
+    cd /opt/cactus
+    python3 -m pip install virtualenv
+    python3 -m virtualenv -p python3.6 cactus_env
+    . /opt/cactus/cactus_env/bin/activate
+    # get cactus binaries
+    wget https://github.com/ComparativeGenomicsToolkit/cactus/releases/download/v1.2.3/cactus-bin-v1.2.3.tar.gz
+    tar -xzf cactus-bin-v1.2.3.tar.gz
+    cd cactus-bin-v1.2.3
+    pip install -U setuptools pip
+    pip install -U -r ./toil-requirement.txt
+    pip install -U .
+    cd bin
+    # get some UCSC binaries
+    for i in wigToBigWig faToTwoBit bedToBigBed bigBedToBed bedSort hgGcPercent;
+        do wget -q http://hgdownload.cse.ucsc.edu/admin/exe/linux.x86_64/${i};
+        chmod ugo+x ${i};
+    done
+    # update env
+    echo '. /opt/cactus/cactus_env/bin/activate' >> $SINGULARITY_ENVIRONMENT
+    echo 'export PATH=$(pwd)/bin:$PATH' >> $SINGULARITY_ENVIRONMENT
+    echo 'export PYTHONPATH=$(pwd)/lib:$PYTHONPATH' >> $SINGULARITY_ENVIRONMENT
+
+
+%runscript
+    exec "$@"
