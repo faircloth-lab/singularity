@@ -10,6 +10,9 @@ From: augustus-git.simg
     # Update apt-get
     apt-get update
 
+    #Install blast, biotools, bamtools, locales and java 1.8
+    apt-get install -y ncbi-blast+ bamtools python3-biopython locales openjdk-8-jre-headless perl-doc
+
     #Install GeneMark
     cd /
     wget http://topaz.gatech.edu/GeneMark/tmp/GMtool_eq8Tq/gmes_linux_64.tar.gz
@@ -31,26 +34,23 @@ From: augustus-git.simg
     # Install ProtHint
     cd /
     wget -O prothint-v2.5.0.tar.gz https://github.com/gatech-genemark/ProtHint/archive/v2.5.0.tar.gz
-    tar xvf prothint-v2.5.0.tar.gz
+    tar -xvf prothint-v2.5.0.tar.gz
     rm prothint-v2.5.0.tar.gz
     echo 'export PROTHINT_PATH=/ProtHint-2.5.0/bin' >>$SINGULARITY_ENVIRONMENT
 
     # Install GenomeThreader
     cd /
     wget https://genomethreader.org/distributions/gth-1.7.3-Linux_x86_64-64bit.tar.gz
-    tar xvf gth-1.7.3-Linux_x86_64-64bit.tar.gz
+    tar -xvf gth-1.7.3-Linux_x86_64-64bit.tar.gz
     rm gth-1.7.3-Linux_x86_64-64bit.tar.gz
     echo 'export PATH=/gth-1.7.3-Linux_x86_64-64bit/bin:$PATH' >>$SINGULARITY_ENVIRONMENT
 
     # Install Exonerate
     cd /
     wget http://ftp.ebi.ac.uk/pub/software/vertebrategenomics/exonerate/exonerate-2.2.0-x86_64.tar.gz
-    tar xvf exonerate-2.2.0-x86_64.tar.gz
+    tar -xvf exonerate-2.2.0-x86_64.tar.gz
     rm exonerate-2.2.0-x86_64.tar.gz
     echo 'export ALIGNMENT_TOOL_PATH=/exonerate-2.2.0-x86_64/bin' >>$SINGULARITY_ENVIRONMENT
-
-    #Install blast, biotools, bamtools, locales and java 1.8
-    apt-get install -y ncbi-blast+ bamtools python3-biopython locales openjdk-8-jre-headless
 
     # Configure locales
     echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
@@ -61,13 +61,23 @@ From: augustus-git.simg
     cd /
     git clone https://github.com/gpertea/cdbfasta
     cd cdbfasta
-    make
+    make -j $(nproc)
     echo 'export CDBTOOLS_PATH=/cdbfasta' >>$SINGULARITY_ENVIRONMENT
 
     # Install GUSHR
     cd /
     git clone https://github.com/Gaius-Augustus/GUSHR
     echo 'export PATH=/GUSHR:$PATH' >>$SINGULARITY_ENVIRONMENT
+
+    # Install Diamond2 for quick blastp searches
+    cd /
+    mkdir diamond2
+    cd diamond2
+    wget wget http://github.com/bbuchfink/diamond/releases/download/v2.0.5/diamond-linux64.tar.gz
+    tar -xvf diamond-linux64.tar.gz
+    mv diamond diamond2
+    echo 'export PATH=/diamond2:$PATH' >>$SINGULARITY_ENVIRONMENT
+
 
     # Get some UCSC stuff
     cd /usr/local/bin
