@@ -73,7 +73,7 @@ From: augustus-git.simg
     cd /
     mkdir diamond2
     cd diamond2
-    wget wget http://github.com/bbuchfink/diamond/releases/download/v2.0.5/diamond-linux64.tar.gz
+    wget http://github.com/bbuchfink/diamond/releases/download/v2.0.5/diamond-linux64.tar.gz
     tar -xvf diamond-linux64.tar.gz
     mv diamond diamond2
     echo 'export PATH=/diamond2:$PATH' >>$SINGULARITY_ENVIRONMENT
