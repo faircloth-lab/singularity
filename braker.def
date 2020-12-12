@@ -4,7 +4,7 @@ From: augustus-git.simg
 %labels
     # some structure borrowed from https://github.com/ISU-HPC/braker/blob/master/Singularity
     AUTHOR brant@lsu.edu
-    Version v0.0.2
+    Version v0.0.3
 
 %post
     # Update apt-get
