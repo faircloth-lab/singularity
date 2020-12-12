@@ -14,12 +14,14 @@ From: augustus-git.simg
     apt-get install -y ncbi-blast+ bamtools python3-biopython locales openjdk-8-jre-headless perl-doc
 
     #Install GeneMark
+    # IF this steps fails w/ 404, it means you need to the website and update the URL
+    # http://topaz.gatech.edu/GeneMark/
     cd /
-    wget http://topaz.gatech.edu/GeneMark/tmp/GMtool_eq8Tq/gmes_linux_64.tar.gz
+    wget http://topaz.gatech.edu/GeneMark/tmp/GMtool_q5HZH/gmes_linux_64.tar.gz
     tar xvf gmes_linux_64.tar.gz
     rm gmes_linux_64.tar.gz
     cd gmes_linux_64
-    wget http://topaz.gatech.edu/GeneMark/tmp/GMtool_eq8Tq/gm_key_64.gz
+    wget http://topaz.gatech.edu/GeneMark/tmp/GMtool_q5HZH/gm_key_64.gz
     # unzip and move the key to expected name
     gunzip gm_key_64.gz && mv gm_key_64 .gm_key
     echo 'export GENEMARK_PATH=/gmes_linux_64' >>$SINGULARITY_ENVIRONMENT
