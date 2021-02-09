@@ -30,6 +30,7 @@ From: ubuntu:18.04
     pip install -U setuptools pip
     pip install -U -r ./toil-requirement.txt
     pip install -U .
+
     # get some UCSC binaries - also required and our license is edu
     cd bin
     for i in wigToBigWig faToTwoBit bedToBigBed bigBedToBed bedSort hgGcPercent;
@@ -38,7 +39,7 @@ From: ubuntu:18.04
     done
     # Update env to add environment variable
     echo '. /opt/cactus/cactus_env/bin/activate' >> $SINGULARITY_ENVIRONMENT
-    echo 'export PATH=/opt/cactus/cactus_env/bin:$PATH' >> $SINGULARITY_ENVIRONMENT
+    echo 'export PATH=/opt/cactus/cactus-bin-v1.2.3/bin:$PATH' >> $SINGULARITY_ENVIRONMENT
     echo 'export PYTHONPATH=/opt/cactus/cactus-bin-v1.2.3/lib:$PYTHONPATH' >> $SINGULARITY_ENVIRONMENT
     # Create bind points for HPC and/or local environment
     mkdir /project /work /usr/lib64 /scratch
