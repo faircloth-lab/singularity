@@ -11,7 +11,7 @@ From: ubuntu:18.04
     # Update the distro repo
     apt-get -o Acquire::ForceIPv4=true update
     # Install python3 and some other required items
-    apt-get -o Acquire::ForceIPv4=true install -y python3 python3-pip build-essential wget git && apt-get clean autoclean
+    apt-get -o Acquire::ForceIPv4=true install -y libcurl4 python3 python3-pip build-essential wget git && apt-get clean autoclean
     # Install virtualenv
     mkdir /opt/cactus
     cd /opt/cactus
