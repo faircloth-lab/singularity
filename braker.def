@@ -4,7 +4,7 @@ From: augustus-git.simg
 %labels
     # some structure borrowed from https://github.com/ISU-HPC/braker/blob/master/Singularity
     AUTHOR brant@lsu.edu
-    Version v0.0.3
+    Version v0.0.4
 
 %post
     # Update apt-get
@@ -17,11 +17,11 @@ From: augustus-git.simg
     # IF this steps fails w/ 404, it means you need to the website and update the URL
     # http://topaz.gatech.edu/GeneMark/
     cd /
-    wget http://topaz.gatech.edu/GeneMark/tmp/GMtool_q5HZH/gmes_linux_64.tar.gz
+    wget http://topaz.gatech.edu/GeneMark/tmp/GMtool_HBTLp/gmes_linux_64.tar.gz 
     tar xvf gmes_linux_64.tar.gz
     rm gmes_linux_64.tar.gz
     cd gmes_linux_64
-    wget http://topaz.gatech.edu/GeneMark/tmp/GMtool_q5HZH/gm_key_64.gz
+    wget http://topaz.gatech.edu/GeneMark/tmp/GMtool_HBTLp/gm_key_64.gz
     # unzip and move the key to expected name
     gunzip gm_key_64.gz && mv gm_key_64 .gm_key
     echo 'export GENEMARK_PATH=/gmes_linux_64' >>$SINGULARITY_ENVIRONMENT
@@ -35,10 +35,10 @@ From: augustus-git.simg
 
     # Install ProtHint
     cd /
-    wget -O prothint-v2.5.0.tar.gz https://github.com/gatech-genemark/ProtHint/archive/v2.5.0.tar.gz
-    tar -xvf prothint-v2.5.0.tar.gz
-    rm prothint-v2.5.0.tar.gz
-    echo 'export PROTHINT_PATH=/ProtHint-2.5.0/bin' >>$SINGULARITY_ENVIRONMENT
+    wget -O prothint-v2.6.0.tar.gz https://github.com/gatech-genemark/ProtHint/releases/download/v2.6.0/ProtHint-2.6.0.tar.gz
+    tar -xvf prothint-v2.6.0.tar.gz
+    rm prothint-v2.6.0.tar.gz
+    echo 'export PROTHINT_PATH=/ProtHint-2.6.0/bin' >>$SINGULARITY_ENVIRONMENT
 
     # Install GenomeThreader
     cd /
@@ -96,11 +96,11 @@ From: augustus-git.simg
     #Install braker and set required variables
     cd /
     git clone https://github.com/Gaius-Augustus/BRAKER
-    echo 'export PATH=/BRAKER/scripts:/ProtHint-2.5.0/dependencies:$PATH' >>$SINGULARITY_ENVIRONMENT
+    echo 'export PATH=/BRAKER/scripts:/ProtHint-2.6.0/dependencies:$PATH' >>$SINGULARITY_ENVIRONMENT
     echo 'export AUGUSTUS_SCRIPTS_PATH=/augustus/scripts' >>$SINGULARITY_ENVIRONMENT
     echo 'export AUGUSTUS_BIN_PATH=/augustus/bin' >>$SINGULARITY_ENVIRONMENT
     echo 'export AUGUSTUS_CONFIG_PATH=/augustus/config' >>$SINGULARITY_ENVIRONMENT
-    echo 'export DIAMOND_PATH=/ProtHint-2.5.0/dependencies' >>$SINGULARITY_ENVIRONMENT
+    echo 'export DIAMOND_PATH=/ProtHint-2.6.0/dependencies' >>$SINGULARITY_ENVIRONMENT
 
     # We need to set the locales
     echo 'export LC_ALL=en_US.UTF-8' >>$SINGULARITY_ENVIRONMENT
